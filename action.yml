@@ -1,0 +1,11 @@
+name: "Validate Flyway Migrations"
+description: "Ensures Flyway migrations follow the correct sequence."
+runs:
+  using: "composite"
+  steps:
+    - name: Run Flyway Migration Check
+      shell: bash
+      run: |
+        chmod +x ${{ github.action_path }}/validate_flyway_migrations.sh
+        ${{ github.action_path }}/validate_flyway_migrations.sh
+
