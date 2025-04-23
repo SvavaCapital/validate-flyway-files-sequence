@@ -1,5 +1,6 @@
 name: "Validate Flyway Migrations"
 description: "Ensures Flyway migrations follow the correct sequence."
+color: red
 runs:
   using: "composite"
   steps:
@@ -8,5 +9,3 @@ runs:
       run: |
         chmod +x ${{ github.action_path }}/validate_flyway_migrations.sh
         ${{ github.action_path }}/validate_flyway_migrations.sh
-    - color: red
-
