@@ -32,6 +32,11 @@ if ! git rev-parse --verify "$BASE_BRANCH" >/dev/null 2>&1; then
   git fetch origin "$BASE_BRANCH:$BASE_BRANCH"
 fi
 
+if ! git rev-parse --verify "$CURRENT_BRANCH" >/dev/null 2>&1; then
+  echo "🔄 Fetching base branch '$CURRENT_BRANCH'..."
+  git fetch origin "$CURRENT_BRANCH:$CURRENT_BRANCH"
+fi
+
 NEW_FILES=$(git diff --name-only --diff-filter=A "origin/$BASE_BRANCH...origin/$CURRENT_BRANCH")
 NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIR/.*/V[0-9]+__.*\.sql$" || true)
 NEW_VERSIONS=$(echo "$NEW_MIGRATIONS" | sed -E 's/.*\/V([0-9]+)__.*\.sql/\1/' | sort -n | uniq)
