@@ -18,25 +18,26 @@ ALL_MIGRATION_VERSIONS=$(for file in "${migration_files[@]}"; do
   fi
 done | sort -n | uniq)
 
-# Fetch base branch if not present
-if ! git rev-parse --verify "$GITHUB_BASE_REF" >/dev/null 2>&1; then
-  echo "🔄 Fetching base branch '$GITHUB_BASE_REF'..."
-  git fetch origin "$GITHUB_BASE_REF:$GITHUB_BASE_REF"
-fi
+## Fetch base branch if not present
+#if ! git rev-parse --verify "$GITHUB_BASE_REF" >/dev/null 2>&1; then
+#  echo "🔄 Fetching base branch '$GITHUB_BASE_REF'..."
+#  git fetch origin "$GITHUB_BASE_REF:$GITHUB_BASE_REF"
+#fi
+#
+#if ! git rev-parse --verify "$GITHUB_HEAD_REF" >/dev/null 2>&1; then
+#  echo "🔄 Fetching current branch '$GITHUB_HEAD_REF'..."
+#  git fetch origin "$GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
+#fi
 
-if ! git rev-parse --verify "$GITHUB_HEAD_REF" >/dev/null 2>&1; then
-  echo "🔄 Fetching current branch '$GITHUB_HEAD_REF'..."
-  git fetch origin "$GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
-fi
-
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
+#CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
 # Use BASE_BRANCH from GitHub Actions environment
-BASE_BRANCH=$GITHUB_BASE_REF
+#BASE_BRANCH=$GITHUB_BASE_REF
 
-echo "🔵 Base branch: $BASE_BRANCH"
-echo "🔵 Current branch: $CURRENT_BRANCH"
+#echo "🔵 Base branch: $BASE_BRANCH"
+#echo "🔵 Current branch: $CURRENT_BRANCH"
 
-NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$CURRENT_BRANCH")
+#NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$CURRENT_BRANCH")
+NEW_FILES=$(git diff --name-only --diff-filter=A "origin/$GITHUB_BASE_REF...origin/$GITHUB_HEAD_REF")
 NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIR/.*/V[0-9]+__.*\.sql$" || true)
 NEW_VERSIONS=$(echo "$NEW_MIGRATIONS" | sed -E 's/.*\/V([0-9]+)__.*\.sql/\1/' | sort -n | uniq)
 
