@@ -18,6 +18,7 @@ ALL_MIGRATION_VERSIONS=$(for file in "${migration_files[@]}"; do
   fi
 done | sort -n | uniq)
 
+
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
 # Use BASE_BRANCH from GitHub Actions environment
 BASE_BRANCH=$GITHUB_BASE_REF
@@ -25,7 +26,8 @@ BASE_BRANCH=$GITHUB_BASE_REF
 echo "🔵 Base branch: $BASE_BRANCH"
 echo "🔵 Current branch: $CURRENT_BRANCH"
 
-NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$GITHUB_HEAD_REF")
+NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$CURRENT_BRANCH")
+
 NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIR/.*/V[0-9]+__.*\.sql$" || true)
 NEW_VERSIONS=$(echo "$NEW_MIGRATIONS" | sed -E 's/.*\/V([0-9]+)__.*\.sql/\1/' | sort -n | uniq)
 
