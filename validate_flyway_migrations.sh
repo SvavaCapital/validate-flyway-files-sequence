@@ -18,14 +18,6 @@ ALL_MIGRATION_VERSIONS=$(for file in "${migration_files[@]}"; do
   fi
 done | sort -n | uniq)
 
-
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
-# Use BASE_BRANCH from GitHub Actions environment
-BASE_BRANCH=$GITHUB_BASE_REF
-
-echo "🔵 Base branch: $BASE_BRANCH"
-echo "🔵 Current branch: $CURRENT_BRANCH"
-
 # Fetch base branch if not present
 if ! git rev-parse --verify "$BASE_BRANCH" >/dev/null 2>&1; then
   echo "🔄 Fetching base branch '$BASE_BRANCH'..."
@@ -36,6 +28,13 @@ if ! git rev-parse --verify "$CURRENT_BRANCH" >/dev/null 2>&1; then
   echo "🔄 Fetching base branch '$CURRENT_BRANCH'..."
   git fetch origin "$CURRENT_BRANCH:$CURRENT_BRANCH"
 fi
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
+# Use BASE_BRANCH from GitHub Actions environment
+BASE_BRANCH=$GITHUB_BASE_REF
+
+echo "🔵 Base branch: $BASE_BRANCH"
+echo "🔵 Current branch: $CURRENT_BRANCH"
 
 NEW_FILES=$(git diff --name-only --diff-filter=A "origin/$BASE_BRANCH...origin/$CURRENT_BRANCH")
 NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIR/.*/V[0-9]+__.*\.sql$" || true)
