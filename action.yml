@@ -8,4 +8,5 @@ runs:
       run: |
         chmod +x ${{ github.action_path }}/validate_flyway_migrations.sh
         ${{ github.action_path }}/validate_flyway_migrations.sh
+    - color: red
 
