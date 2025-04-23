@@ -19,14 +19,14 @@ ALL_MIGRATION_VERSIONS=$(for file in "${migration_files[@]}"; do
 done | sort -n | uniq)
 
 # Fetch base branch if not present
-if ! git rev-parse --verify "$BASE_BRANCH" >/dev/null 2>&1; then
-  echo "🔄 Fetching base branch '$BASE_BRANCH'..."
-  git fetch origin "$BASE_BRANCH:$BASE_BRANCH"
+if ! git rev-parse --verify "$GITHUB_BASE_REF" >/dev/null 2>&1; then
+  echo "🔄 Fetching base branch '$GITHUB_BASE_REF'..."
+  git fetch origin "$GITHUB_BASE_REF:$GITHUB_BASE_REF"
 fi
 
-if ! git rev-parse --verify "$CURRENT_BRANCH" >/dev/null 2>&1; then
-  echo "🔄 Fetching base branch '$CURRENT_BRANCH'..."
-  git fetch origin "$CURRENT_BRANCH:$CURRENT_BRANCH"
+if ! git rev-parse --verify "$GITHUB_HEAD_REF" >/dev/null 2>&1; then
+  echo "🔄 Fetching current branch '$GITHUB_HEAD_REF'..."
+  git fetch origin "$GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
 fi
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
