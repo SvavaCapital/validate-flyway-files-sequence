@@ -19,7 +19,7 @@ ALL_MIGRATION_VERSIONS=$(for file in "${migration_files[@]}"; do
 done | sort -n | uniq)
 
 
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref $GITHUB_HEAD_REF)
 # Use BASE_BRANCH from GitHub Actions environment
 BASE_BRANCH=$GITHUB_BASE_REF
 
