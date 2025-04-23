@@ -26,8 +26,13 @@ BASE_BRANCH=$GITHUB_BASE_REF
 echo "🔵 Base branch: $BASE_BRANCH"
 echo "🔵 Current branch: $CURRENT_BRANCH"
 
-NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$CURRENT_BRANCH")
+# Fetch base branch if not present
+if ! git rev-parse --verify "$BASE_BRANCH" >/dev/null 2>&1; then
+  echo "🔄 Fetching base branch '$BASE_BRANCH'..."
+  git fetch origin "$BASE_BRANCH:$BASE_BRANCH"
+fi
 
+NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$CURRENT_BRANCH")
 NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIR/.*/V[0-9]+__.*\.sql$" || true)
 NEW_VERSIONS=$(echo "$NEW_MIGRATIONS" | sed -E 's/.*\/V([0-9]+)__.*\.sql/\1/' | sort -n | uniq)
 
