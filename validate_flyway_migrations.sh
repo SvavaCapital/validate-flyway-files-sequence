@@ -1,4 +1,33 @@
 #!/bin/bash
+###############################################################################
+# validate-migrations.sh
+#
+# This script validates the integrity and continuity of Flyway-style SQL
+# migration and fixture versioning in a project, typically used in CI/CD.
+#
+# It performs the following key operations:
+# 1. Validates that the migration directory exists.
+# 2. Collects all existing migration versions from `db/migration`.
+# 3. Compares the current branch with the base branch (GitHub context) to find
+#    newly added migration and fixture files.
+# 4. Verifies that new migration versions:
+#    - Are strictly increasing and continuous with no gaps.
+#    - Start exactly from the next version after the latest existing one.
+# 5. Validates that fixture files (from `db/fixtures`):
+#    - Have valid major versions matching either existing or new migration versions.
+#    - Contain continuous minor versioning starting from 1 for each major.
+#
+# Usage:
+# Typically used in CI environments like GitHub Actions. Relies on the
+# environment variables:
+#   - GITHUB_BASE_REF
+#   - GITHUB_HEAD_REF
+#
+# Exit codes:
+#   0  - All validations passed.
+#   1  - Any structural or versioning issue detected.
+###############################################################################
+
 set -e
 
 MIGRATION_DIR="src/main/resources/db/migration"
