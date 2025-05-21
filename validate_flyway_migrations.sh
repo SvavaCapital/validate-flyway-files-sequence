@@ -30,8 +30,12 @@
 
 set -e
 
-MIGRATION_DIR="src/main/resources/db/migration"
-FIXTURES_DIR="src/main/resources/db/fixtures"
+# Use environment variables (set in GitHub Action) or fall back to defaults
+MIGRATION_DIR=${MIGRATION_DIRS:-"src/main/resources/db/migration"}
+FIXTURES_DIR=${FIXTURES_DIR:-"src/main/resources/db/fixtures"}
+
+echo "🔵 Using migration directory: $MIGRATION_DIR"
+echo "🔵 Using fixtures directory: $FIXTURES_DIR"
 
 if [ ! -d "$MIGRATION_DIR" ]; then
     echo "❌ Migration directory $MIGRATION_DIR does not exist!"
