@@ -4,8 +4,8 @@ inputs:
   migration_dirs:
     description: "Path to the fixtures directory"
     required: false
-    default: "src/main/resources/db/migration"
-  fixtures_dir:
+    default: "src/main/resources/db/migrations"
+  fixtures_dirs:
     description: "Path to the fixtures directory"
     required: false
     default: "src/main/resources/db/fixtures"
@@ -19,7 +19,7 @@ runs:
       shell: bash
       env:
         MIGRATION_DIRS: ${{ inputs.migration_dirs }}
-        FIXTURES_DIR: ${{ inputs.fixtures_dir }}
+        FIXTURES_DIRS: ${{ inputs.fixtures_dirs }}
       run: |
         chmod +x ${{ github.action_path }}/validate_flyway_migrations.sh
         ${{ github.action_path }}/validate_flyway_migrations.sh

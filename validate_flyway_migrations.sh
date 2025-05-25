@@ -31,19 +31,19 @@
 set -e
 
 # Use environment variables (set in GitHub Action) or fall back to defaults
-MIGRATION_DIR=${MIGRATION_DIRS:-"src/main/resources/db/migration"}
-FIXTURES_DIR=${FIXTURES_DIR:-"src/main/resources/db/fixtures"}
+MIGRATION_DIRS=${MIGRATION_DIRSS:-"src/main/resources/db/migrations"}
+FIXTURES_DIRS=${FIXTURES_DIRSS:-"src/main/resources/db/fixtures"}
 
-echo "🔵 Using migration directory: $MIGRATION_DIR"
-echo "🔵 Using fixtures directory: $FIXTURES_DIR"
+echo "🔵 Using migration directory: $MIGRATION_DIRS"
+echo "🔵 Using fixtures directory: $FIXTURES_DIRS"
 
-if [ ! -d "$MIGRATION_DIR" ]; then
-    echo "❌ Migration directory $MIGRATION_DIR does not exist!"
+if [ ! -d "$MIGRATION_DIRS" ]; then
+    echo "❌ Migration directory $MIGRATION_DIRS does not exist!"
     exit 1
 fi
 
 # Safely collect all migration files across folders
-migration_files=($(find "$MIGRATION_DIR" -type f -name 'V*__*.sql'))
+migration_files=($(find "$MIGRATION_DIRS" -type f -name 'V*__*.sql'))
 
 ALL_MIGRATION_VERSIONS=$(for file in "${migration_files[@]}"; do
   if [[ "$file" =~ /V([0-9]+)__.*\.sql$ ]]; then
@@ -71,7 +71,7 @@ done | sort -n | uniq)
 
 #NEW_FILES=$(git diff --name-only --diff-filter=A "$BASE_BRANCH...$CURRENT_BRANCH")
 NEW_FILES=$(git diff --name-only --diff-filter=A "origin/$GITHUB_BASE_REF...origin/$GITHUB_HEAD_REF")
-NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIR/.*/V[0-9]+__.*\.sql$" || true)
+NEW_MIGRATIONS=$(echo "$NEW_FILES" | grep -E "^$MIGRATION_DIRS/.*/V[0-9]+__.*\.sql$" || true)
 NEW_VERSIONS=$(echo "$NEW_MIGRATIONS" | sed -E 's/.*\/V([0-9]+)__.*\.sql/\1/' | sort -n | uniq)
 
 echo "📗 New migration versions: $NEW_VERSIONS"
@@ -122,7 +122,7 @@ echo "📘 Valid fixture major versions: $VALID_MAJORS"
 # Initialize an empty array to store fixture versions
 existing_minor_versions=()
 
-NEW_FIXTURES=$(echo "$NEW_FILES" | grep -E "^$FIXTURES_DIR/.*/V[0-9]+.[0-9]+__.*\.sql$" || true)
+NEW_FIXTURES=$(echo "$NEW_FILES" | grep -E "^$FIXTURES_DIRS/.*/V[0-9]+.[0-9]+__.*\.sql$" || true)
 
 # Handle case where no new migration versions are found
 if [ -z "$NEW_FIXTURES" ]; then
