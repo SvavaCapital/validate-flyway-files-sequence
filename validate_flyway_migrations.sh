@@ -31,8 +31,8 @@
 set -e
 
 # Use environment variables (set in GitHub Action) or fall back to defaults
-MIGRATION_DIR=${MIGRATION_DIRS:-"src/main/resources/db/migrations"}
-FIXTURES_DIR=${FIXTURES_DIRS:-"src/main/resources/db/fixtures"}
+MIGRATION_DIR=${MIGRATION_DIR:-"src/main/resources/db/migrations"}
+FIXTURES_DIR=${FIXTURES_DIR:-"src/main/resources/db/fixtures"}
 
 echo "🔵 Using migration directory: $MIGRATION_DIR"
 echo "🔵 Using fixtures directory: $FIXTURES_DIR"

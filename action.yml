@@ -1,11 +1,11 @@
 name: "Validate Flyway Migrations"
 description: "Ensures Flyway migrations follow the correct sequence."
 inputs:
-  migration_dirs:
+  migration_dir:
     description: "Path to the migration directory"
     required: false
     default: "src/main/resources/db/migrations"
-  fixtures_dirs:
+  fixtures_dir:
     description: "Path to the fixtures directory"
     required: false
     default: "src/main/resources/db/fixtures"
@@ -18,8 +18,8 @@ runs:
     - name: Run Flyway Migration Check
       shell: bash
       env:
-        MIGRATION_DIRS: ${{ inputs.migration_dirs }}
-        FIXTURES_DIRS: ${{ inputs.fixtures_dirs }}
+        MIGRATION_DIR: ${{ inputs.migration_dir }}
+        FIXTURES_DIR: ${{ inputs.fixtures_dir }}
       run: |
         chmod +x ${{ github.action_path }}/validate_flyway_migrations.sh
         ${{ github.action_path }}/validate_flyway_migrations.sh
