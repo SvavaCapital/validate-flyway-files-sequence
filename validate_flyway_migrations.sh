@@ -134,6 +134,23 @@ fi
 # Clean minor version holders
 existing_minor_versions=""
 
+existing_fixture_files=($(find "$FIXTURES_DIR" -type f -name 'V[0-9]*.[0-9]*__*.sql'))
+
+# Track max minor version per major using dynamic variables
+for file in "${existing_fixture_files[@]}"; do
+    if [[ "$file" =~ V([0-9]+)\.([0-9]+)__.*\.sql ]]; then
+        major="${BASH_REMATCH[1]}"
+        minor="${BASH_REMATCH[2]}"
+
+        # Get current max minor for this major
+        eval "current_max_minor=\${existing_max_minor_$major:-0}"
+
+        if (( minor > current_max_minor )); then
+            eval "existing_max_minor_$major=$minor"
+        fi
+    fi
+done
+
 # Build current fixture state
 for file in $NEW_FIXTURES; do
     if [[ "$file" =~ V([0-9]+)\.([0-9]+)__.*\.sql ]]; then
@@ -170,9 +187,10 @@ for major in $VALID_MAJORS; do
         continue
     fi
 
+    eval "existing_max=\${existing_max_minor_$major:-0}"
+    expected=$((existing_max))
     minors_sorted=$(echo "$minors" | tr ' ' '\n' | grep -v '^$' | sort -n)
 
-    expected=1
     while read -r minor; do
         if [[ "$minor" -ne "$expected" ]]; then
             echo "❌ Minor version sequence error for V$major. Expected minor $expected but found $minor."
